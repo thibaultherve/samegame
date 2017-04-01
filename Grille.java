@@ -4,7 +4,7 @@ import javax.swing.JComponent;
 import java.awt.event.*;
 import java.util.Random;
 
-public class Grille extends JComponent implements MouseMotionListener {
+public class Grille extends JComponent implements MouseListener, MouseMotionListener{
 
   
   Bloc[] tabBlocs = new Bloc[150];
@@ -14,6 +14,7 @@ public class Grille extends JComponent implements MouseMotionListener {
 
     //Ajout de JComponent en tant qu'observateur
     this.addMouseMotionListener(this);
+    this.addMouseListener(this);
   }
 
   public void initTableBlocs() {
@@ -138,6 +139,32 @@ public void focusBlocsPeripheriques(Bloc P_bloc) {
 
 public void mouseDragged(MouseEvent evenement) {
 
+
+
+}
+
+public void mouseClicked(MouseEvent evenement) {
+
+		    for (int i=0; i<150; i++) {
+	    	if (this.tabBlocs[i].bFocus==true) {
+	    		this.tabBlocs[i].actif=false;
+	    		this.tabBlocs[i].bFocus=false;
+	    	}      
+    }
+
+    this.repaint();
+}
+
+public void mouseEntered(MouseEvent evenement) {
+
+}
+public void mouseExited(MouseEvent evenement) {
+
+}
+public void mousePressed(MouseEvent evenement) {
+
+}
+public void mouseReleased(MouseEvent evenement){
 }
 
 @Override
@@ -146,7 +173,7 @@ public void paintComponent(Graphics pinceau) {
   Color jaune = new Color(255,255,0,125);
     secondPinceau.setColor(jaune);
   for (int i=0; i<150; i++) {
-    if (tabBlocs[i]!=null) {
+    if (tabBlocs[i]!=null && tabBlocs[i].actif==true) {
 
       secondPinceau.drawImage(
         this.tabBlocs[i].imageBloc,

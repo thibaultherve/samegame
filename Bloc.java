@@ -16,6 +16,7 @@ public class Bloc {
   char typeBloc;
 
   boolean bFocus = false;
+  boolean actif = true;
 
   public Bloc(int P_posx, int P_posy, int P_largeur, int P_hauteur) {
     posx=P_posx;
