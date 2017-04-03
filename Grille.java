@@ -3,10 +3,11 @@ import java.awt.image.*;
 import javax.swing.JComponent;
 import java.awt.event.*;
 import java.util.Random;
+import java.lang.Thread;
 
-public class Grille extends JComponent implements MouseListener, MouseMotionListener{
+public class Grille extends JComponent implements MouseListener, MouseMotionListener {
 
-
+	
 	Bloc[] tabBlocs = new Bloc[150];
 	public Grille() {
 		super();
@@ -40,16 +41,27 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 
 	public void assigneTousBlocsPeripheriques() {
 		for (int i=0; i<150; i++) {
-			if (tabBlocs[i]!=null && tabBlocs[i].actif==true)
-				assigneBlocPeripheriques(tabBlocs[i]);
+			
+			assigneBlocPeripheriques(tabBlocs[i]);
 		}
 	}
 
 	public void assigneBlocPeripheriques(Bloc P_bloc) {
-		P_bloc.nord=getBlocNord(P_bloc);
-		P_bloc.sud=getBlocSud(P_bloc);
-		P_bloc.est=getBlocEst(P_bloc);
-		P_bloc.ouest=getBlocOuest(P_bloc);
+		if (P_bloc.actif==false) {
+			P_bloc.nord=null;
+			P_bloc.sud=null;
+			P_bloc.est=null;
+			P_bloc.ouest=null;
+
+		}
+
+		else{
+			P_bloc.nord=getBlocNord(P_bloc);
+			P_bloc.sud=getBlocSud(P_bloc);
+			P_bloc.est=getBlocEst(P_bloc);
+			P_bloc.ouest=getBlocOuest(P_bloc);
+		}
+
 	}
 
 	public Bloc getBlocNord(Bloc P_bloc) {
@@ -136,7 +148,7 @@ public void focusBlocsPeripheriques(Bloc P_bloc) {
 }
   // si il y a qu'un seul bloc qui a le focus
 if (k==1) {
-    tabBlocs[save_i].bFocus=false; // on lui enlève
+    tabBlocs[save_i].bFocus=false; // on lui enlève le focus
 }
 }
 
@@ -150,18 +162,47 @@ public void mouseDragged(MouseEvent evenement) {
 }
 
 public void mouseClicked(MouseEvent evenement) {
-
+	
 	for (int i=0; i<150; i++) {
 		if (this.tabBlocs[i].bFocus==true) {
 			this.tabBlocs[i].actif=false;
 			this.tabBlocs[i].bFocus=false;
-			
+
 		}      
 	}
+
+
+
 	do {
 		this.repaint();
+		
 	} while (reorgaColonnes());
+
+	int decalage=0;
+
+	do {
+		assigneTousBlocsPeripheriques();
+		decalage++;
+		this.repaint();
+
+	} while (reorgaLignes() && decalage<15);
+
+
+
 	
+}
+
+
+public boolean reorgaLignes() {
+	boolean action=false;
+	for (int i=0; i<15; i++) {
+		if (checkColonneVide(i)) {
+			decalageGauche(i+1);
+			action=true;
+		}
+	}
+
+	return action;
 }
 
 public boolean reorgaColonnes() {	
@@ -175,7 +216,7 @@ public boolean reorgaColonnes() {
 				if (tabBlocs[i].posy<9) {
 
 					//notre bloc va de 1 case vers le sud
-					tabBlocs[i].posy += 1;
+					tabBlocs[i].posy++;
 
 					//une action a été faite
 					action=true;
@@ -208,6 +249,35 @@ public boolean reorgaColonnes() {
 
 	//indique si une action a été faite
 	return action;
+}
+
+
+
+public boolean checkColonneVide(int numColonne) {
+	
+	for (int j=0; j<10; j++) {
+		Bloc monBloc=getBloc(numColonne,j);
+		if (monBloc!=null) {
+			if (monBloc.actif=true) {
+				return false;				
+			}				
+		}
+	}
+	return true;	
+}
+
+public void decalageGauche(int numColonne) {
+	
+	for (int i=0; i<10; i++) {
+		Bloc monBloc = getBloc(numColonne,i);	
+
+		if (monBloc!=null) {
+			if (monBloc.actif==true) {
+				monBloc.posx--;
+				assigneBlocPeripheriques(monBloc);
+			}
+		}		
+	}
 }
 
 public void mouseEntered(MouseEvent evenement) {
