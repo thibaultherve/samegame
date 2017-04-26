@@ -24,8 +24,4 @@ public class Bloc {
     largeur_case=P_largeur;
     hauteur_case=P_hauteur;
   }
-
-
-
-
 }

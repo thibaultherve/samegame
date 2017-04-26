@@ -4,11 +4,16 @@ import javax.swing.JComponent;
 import java.awt.event.*;
 import java.util.Random;
 import java.lang.Thread;
+import javax.swing.*;
 
 public class Grille extends JComponent implements MouseListener, MouseMotionListener {
 
-	
+	double score=0;
+	double add;
+	String scoreTXT="0";
+	String addTXT="0";
 	Bloc[] tabBlocs = new Bloc[150];
+	
 	public Grille() {
 		super();
 		initTableBlocs();
@@ -16,6 +21,39 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
     //Ajout de JComponent en tant qu'observateur
 		this.addMouseMotionListener(this);
 		this.addMouseListener(this);
+		/*JLabel scoreTXT = new JLabel("0");
+    JPanel panneau = new JPanel();
+    FlowLayout gestionnaire = new FlowLayout(FlowLayout.CENTER);
+    panneau.setLayout(gestionnaire);
+    panneau.setPreferredSize(new Dimension(300,100));
+
+    JLabel titre = new JLabel("SameGame");    
+    titre.setFont(new Font("Verdana", Font.BOLD,26));
+    titre.setForeground(new Color(255,100,0));
+    titre.setPreferredSize(new Dimension(300,200));
+    titre.setVerticalAlignment(JLabel.TOP);
+    titre.setHorizontalAlignment(JLabel.CENTER);
+
+    JLabel texte1 = new JLabel("Score :");    
+    texte1.setFont(new Font("Verdana", Font.BOLD,20));
+    texte1.setForeground(new Color(255,0,0));
+    texte1.setPreferredSize(new Dimension(300,20));
+    texte1.setVerticalAlignment(JLabel.TOP);
+    texte1.setHorizontalAlignment(JLabel.CENTER);
+
+   
+    scoreTXT.setFont(new Font("Verdana", Font.BOLD,20));
+    scoreTXT.setForeground(new Color(255,255,255));
+    scoreTXT.setPreferredSize(new Dimension(250,20));
+    scoreTXT.setVerticalAlignment(JLabel.TOP);
+    scoreTXT.setHorizontalAlignment(JLabel.CENTER);
+    scoreTXT.setOpaque(true);
+    scoreTXT.setBackground(Color.BLACK);
+panneau.add(titre);
+    panneau.add(texte1);
+    panneau.add(scoreTXT);    
+    this.add(panneau);*/
+
 	}
 
 	public void initTableBlocs() {
@@ -163,15 +201,28 @@ public void mouseDragged(MouseEvent evenement) {
 
 public void mouseClicked(MouseEvent evenement) {
 	
+	boolean testFocus=false;
+
 	for (int i=0; i<150; i++) {
 		if (this.tabBlocs[i].bFocus==true) {
+			testFocus=true;
+		}
+	}
+
+	if (testFocus) {
+		actualiseScore();
+	}
+
+	for (int i=0; i<150; i++) {
+		if (this.tabBlocs[i].bFocus==true) {
+			
 			this.tabBlocs[i].actif=false;
 			this.tabBlocs[i].bFocus=false;
 
 		}      
 	}
 
-
+	
 
 	do {
 		this.repaint();
@@ -188,8 +239,23 @@ public void mouseClicked(MouseEvent evenement) {
 	} while (reorgaLignes() && decalage<15);
 
 
+}
 
+public void actualiseScore() {
+	int n=0;
 	
+
+	for (int i=0; i<150; i++) {
+		if (this.tabBlocs[i].bFocus==true) {
+			n++;
+		}
+	}
+	System.out.println(n);
+	// (n - 2)^2
+	add = Math.pow(n-2,2);
+	score = score + add ;
+	scoreTXT=Integer.toString((int)score);
+	addTXT=Integer.toString((int)add);
 }
 
 
@@ -208,6 +274,10 @@ public boolean reorgaLignes() {
 public boolean reorgaColonnes() {	
 	boolean action=false;
 	for (int i=0; i<150; i++) {
+
+
+
+
 		//si mon bloc est actif
 		if (tabBlocs[i].actif==true) {
 			//si le bloc sud est null
@@ -243,9 +313,13 @@ public boolean reorgaColonnes() {
 			}
 
 		}
+
+
 	}
 	// on assigne les nouveaux périphériques à tous nos blocs
 	assigneTousBlocsPeripheriques();
+
+	         
 
 	//indique si une action a été faite
 	return action;
@@ -280,6 +354,41 @@ public void decalageGauche(int numColonne) {
 	}
 }
 
+public boolean testFin() {
+	boolean fin=true;
+
+	for (int i=0; i<150; i++) {
+		if(tabBlocs[i]!=null && tabBlocs[i].actif==true) {
+			if (tabBlocs[i].nord!=null && tabBlocs[i].nord.actif==true) {
+				if (tabBlocs[i].typeBloc==tabBlocs[i].nord.typeBloc) {
+					fin=false;
+				}
+			}
+
+			if (tabBlocs[i].sud!=null && tabBlocs[i].sud.actif==true) {
+				if (tabBlocs[i].typeBloc==tabBlocs[i].sud.typeBloc) {
+					fin=false;
+				}
+			}
+
+			if (tabBlocs[i].est!=null && tabBlocs[i].est.actif==true) {
+				if (tabBlocs[i].typeBloc==tabBlocs[i].est.typeBloc) {
+					fin=false;
+				}
+			}
+
+			if (tabBlocs[i].ouest!=null && tabBlocs[i].ouest.actif==true) {
+				if (tabBlocs[i].typeBloc==tabBlocs[i].ouest.typeBloc) {
+					fin=false;
+				}
+			}
+		}
+		
+	}
+	return fin;
+
+}
+
 public void mouseEntered(MouseEvent evenement) {
 
 }
@@ -296,26 +405,76 @@ public void mouseReleased(MouseEvent evenement){
 public void paintComponent(Graphics pinceau) {
 	Graphics secondPinceau = pinceau.create();
 	Color jaune = new Color(255,255,0,125);
+
+
+	//texte + score
+	secondPinceau.setFont(new Font("Verdana", Font.BOLD, 20));
+
 	secondPinceau.setColor(jaune);
+
 	for (int i=0; i<150; i++) {
 		if (tabBlocs[i]!=null && tabBlocs[i].actif==true) {
-
+			//on dessine l'image du bloc
 			secondPinceau.drawImage(
 				this.tabBlocs[i].imageBloc,
 				this.tabBlocs[i].posx*this.tabBlocs[i].largeur_case,
 				this.tabBlocs[i].posy*this.tabBlocs[i].hauteur_case,
 				this);
 
-
+			// si le bloc a le focus alors on lui ajoute un carré jaune
 			if (this.tabBlocs[i].bFocus==true) {
+
 				secondPinceau.fillRect(
 					this.tabBlocs[i].posx*this.tabBlocs[i].largeur_case,
 					this.tabBlocs[i].posy*this.tabBlocs[i].hauteur_case,
 					this.tabBlocs[i].largeur_case,
 					this.tabBlocs[i].hauteur_case);
+
+			
 			}
 		}
 	}
+	if (!testFin()) {
+	secondPinceau.setFont(new Font("Monospace",Font.PLAIN,30));
+	secondPinceau.setColor(Color.BLACK);
+    secondPinceau.drawString("SameGame", 820,35);
+
+    secondPinceau.setFont(new Font("Monospace",Font.PLAIN,25));
+    secondPinceau.drawString(scoreTXT, 820,200);
+
+
+    secondPinceau.setColor(Color.RED);
+    secondPinceau.setFont(new Font("Monospace",Font.BOLD,30));
+    secondPinceau.drawString("SCORE", 820,170);
+    
+     secondPinceau.setFont(new Font("Monospace",Font.BOLD,25));
+
+
+
+	if (add!=0) {
+		secondPinceau.setColor(Color.GREEN);
+		if (add>=250) {
+			secondPinceau.setColor(Color.BLUE);
+		}
+				if (add>=500) {
+			secondPinceau.setColor(new Color(230,223,0));
+		}
+
+		
+   		secondPinceau.drawString("(+"+addTXT+")", 920,200);
+   }
+}
+
+   if(testFin()) {
+   	secondPinceau.setColor(Color.RED);
+    secondPinceau.setFont(new Font("Monospace",Font.BOLD,35));    
+    secondPinceau.drawString("Fin de la partie", 60,200);
+    secondPinceau.setColor(Color.BLACK);
+    secondPinceau.drawString("Votre score est de :", 60,235);
+    secondPinceau.setColor(Color.RED);
+    secondPinceau.drawString(scoreTXT, 455,235);
+   }
+
 
 }
 }
