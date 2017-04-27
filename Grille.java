@@ -29,7 +29,7 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 		GridLayout g1 = new GridLayout(2,2);
 		this.setLayout(g1);
 
-		jb_aleatoire.setPreferredSize(new Dimension(100,100));
+		
 		this.add(jb_fichier); 
 		this.add(jb_aleatoire);
 	}
@@ -49,6 +49,9 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 		else if (jb_fichier.getText().equals(evenement.getActionCommand())) {			
 			JFileChooser chooser = new JFileChooser();
 			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+
+			//permet d'ouvrir directement dans le répertoire où se trouve le jeu
+			chooser.setCurrentDirectory(new File("."));
 
 			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				File file = chooser.getSelectedFile();
@@ -453,6 +456,7 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 				}
 			}
 		}
+
 		if (!testFin()) {
 			secondPinceau.setFont(new Font("Monospace",Font.PLAIN,30));
 			secondPinceau.setColor(Color.BLACK);
