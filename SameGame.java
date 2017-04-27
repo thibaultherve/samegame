@@ -3,14 +3,11 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 
-
 public class SameGame {
   public static int LARGEUR_FENETRE = 15*50+300;
   public static int HAUTEUR_FENETRE = 10*57;
   public static int NB_LIGNES = 10;
   public static int NB_COLONNES = 15;
-
-
 
   public static void main(String[] args) {
 
@@ -22,20 +19,8 @@ public class SameGame {
     fenetre.setResizable(false);
 
     fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-    
-
-
     Grille maGrille = new Grille();
-
-    
     fenetre.add(maGrille);
-
-    
-
-
     fenetre.setVisible(true);
-
   }
-
 }
