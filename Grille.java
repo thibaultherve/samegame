@@ -16,8 +16,9 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 	int choix=0;
 	File file=null;
 
-	JButton jb_fichier = new JButton("Jouer avec un fichier");
-	JButton jb_aleatoire = new JButton("Jouer avec une grille aleatoire");
+	JButton jb_fichier = new JButton(new ImageIcon("./img/fic.png"));
+	JButton jb_aleatoire = new JButton(new ImageIcon("./img/ale.png"));
+	JButton centre = new JButton(new ImageIcon("./img/SameGame.png"));
 	
 	public Grille() {
 		super();    	
@@ -25,28 +26,30 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 		this.addMouseListener(this);
 		jb_aleatoire.addActionListener(this);
 		jb_fichier.addActionListener(this); 
+		centre.addActionListener(this);
 
-		GridLayout g1 = new GridLayout(2,2);
+		BorderLayout g1 = new BorderLayout();
 		this.setLayout(g1);
 
-		
-		this.add(jb_fichier); 
-		this.add(jb_aleatoire);
+		jb_aleatoire.setPreferredSize(new Dimension(100,100));
+		jb_fichier.setPreferredSize(new Dimension(100,100));
+		this.add(jb_fichier,BorderLayout.NORTH); 
+		this.add(jb_aleatoire,BorderLayout.SOUTH);
+		this.add(centre,BorderLayout.CENTER);
 	}
 
 	public void actionPerformed(ActionEvent evenement) {
 
-        /*on détermine quel bouton on a cliqué en comparant les 2 String :
-        * jb_ale.getText() = le contenu texte de jb_ale (String)
-        * evenement.getActionCommand() = le texte reçu par l'événement */
-
-		if (jb_aleatoire.getText().equals(evenement.getActionCommand())) {
+		if (jb_aleatoire == evenement.getSource()) {
+			
+			initTableBlocs();
 			this.remove(jb_fichier);
 			this.remove(jb_aleatoire);
-			initTableBlocs();
+			this.remove(centre);
+			
 		}
 
-		else if (jb_fichier.getText().equals(evenement.getActionCommand())) {			
+		else if (jb_fichier== evenement.getSource()) {			
 			JFileChooser chooser = new JFileChooser();
 			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
@@ -59,8 +62,43 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 				initTableBlocs(cheminFichier);
 				this.remove(jb_fichier);
 				this.remove(jb_aleatoire);
+				this.remove(centre);
 			}
 		}
+
+		else {
+			JFrame regles = new JFrame();
+			regles.setSize(500, 300);
+			regles.setLayout(new GridLayout(9, 1));
+
+			JLabel menu1 = new JLabel("Regles du jeu");
+			JLabel menu2 = new JLabel("Dans ce jeu, une grille est remplie de blocs de trois types");
+			JLabel menu3 = new JLabel("votre but est de la vider.");
+			JLabel menu4 = new JLabel("Un groupe de blocs adjacents et de même type");
+			JLabel menu5 = new JLabel("il peut être retiré en cliquant dessus.");
+			JLabel menu6 = new JLabel("votre but est de la vider.");
+			JLabel menu7 = new JLabel("Les blocs restants se réarrangent afin de boucher les trous");
+			JLabel menu8 = new JLabel("et on recommence jusqu'à avoir vidé la grille");
+			JLabel menu9 = new JLabel("ou n'avoir plus que des blocs isolés.");
+			regles.add(menu1);
+			regles.add(menu2);
+			regles.add(menu3);
+			regles.add(menu4);
+			regles.add(menu5);
+			regles.add(menu6);
+			regles.add(menu7);
+			regles.add(menu8);
+			regles.add(menu9);
+
+
+
+
+
+			regles.setVisible(true);
+			
+
+		}
+
 	}
 
 	//permet de définir le type et les blocs périphériques de chaque bloc aléatoirement
@@ -456,7 +494,6 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 				}
 			}
 		}
-
 		if (!testFin()) {
 			secondPinceau.setFont(new Font("Monospace",Font.PLAIN,30));
 			secondPinceau.setColor(Color.BLACK);
@@ -488,7 +525,7 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 			}
 		}
 
-		if(testFin()) {
+		if(testFin() && score!=0) {
 			secondPinceau.setColor(Color.RED);
 			secondPinceau.setFont(new Font("Monospace",Font.BOLD,35));    
 			secondPinceau.drawString("Fin de la partie", 60,200);
