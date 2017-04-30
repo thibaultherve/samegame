@@ -148,6 +148,7 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 	 */
 	public void initTableBlocs(String cheminFichier) {
 		int k=0;
+		boolean reussie = true;
 		char cara = ' ';
 		
 		Random r = new Random();
@@ -164,11 +165,13 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 					} while (cara=='\n');
 
 					if (cara=='B')
-						tabBlocs[k] = new BlocBleu(j,i,/*LARGEUR_FENETRE/NB_COLONNES*/50,/*HAUTEUR_FENETRE/NB_LIGNES*/57);
+						tabBlocs[k] = new BlocBleu(j,i,50,57);
 					else if (cara=='V')
-						tabBlocs[k] = new BlocVert(j,i,/*LARGEUR_FENETRE/NB_COLONNES*/50,/*HAUTEUR_FENETRE/NB_LIGNES*/57);
+						tabBlocs[k] = new BlocVert(j,i,50,57);
 					else if (cara=='R')
-						tabBlocs[k] = new BlocRouge(j,i,/*LARGEUR_FENETRE/NB_COLONNES*/50,/*HAUTEUR_FENETRE/NB_LIGNES*/57);
+						tabBlocs[k] = new BlocRouge(j,i,50,57);
+					else
+						reussie=false;
 					k++; 
 				}
 			}
@@ -179,7 +182,13 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 			System.err.println("Erreur de lecture du fichier !");
 		}
 
-		assigneTousBlocsPeripheriques();
+		if (reussie)
+			assigneTousBlocsPeripheriques();
+		else {
+			
+			System.err.println("Erreur : le ficher n'est pas au bon format, il doit comporter exactement 150 caractères,seulement R,V ou B, sans compter les sauts de ligne !");
+			System.exit(1);
+		}
 	}
 
 	/**
