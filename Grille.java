@@ -30,7 +30,7 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 
 		BorderLayout g1 = new BorderLayout();
 		this.setLayout(g1);
-
+		
 		jb_aleatoire.setPreferredSize(new Dimension(100,100));
 		jb_fichier.setPreferredSize(new Dimension(100,100));
 		this.add(jb_fichier,BorderLayout.NORTH); 
