@@ -7,19 +7,43 @@ import java.lang.Thread;
 import javax.swing.*;
 import java.io.*;
 
+/**
+ * La classe Grille permet d'afficher le menu puis une grille, de jouer sur celle-ci et d'afficher le score du joueur
+ * @author Thibault HERVE - Flavien RIZOULIERES
+*/
 public class Grille extends JComponent implements MouseListener, MouseMotionListener, ActionListener {
-	double score=0;
-	double add;
-	String scoreTXT="0";
-	String addTXT="0";
-	Bloc[] tabBlocs = new Bloc[150];
-	int choix=0;
-	File file=null;
+	/**
+	 * contient le score de la partie
+	 */
+	private double score=0;
 
-	JButton jb_fichier = new JButton(new ImageIcon("./img/fic.png"));
-	JButton jb_aleatoire = new JButton(new ImageIcon("./img/ale.png"));
-	JButton centre = new JButton(new ImageIcon("./img/SameGame.png"));
+	/**
+	 * contient les points que le joueur vient de gagner
+	 */
+	private double add;
+
+	/**
+	 * correspond à la variable score mais convertie en String
+	 */
+	private String scoreTXT="0";
+
+	/**
+	 * correspond à la variable add mais convertie en String
+	 */
+	private String addTXT="0";
+
+	/**
+	 * tableau des 150 blocs de la grille
+	 */
+	private Bloc[] tabBlocs = new Bloc[150];
 	
+	private JButton jb_fichier = new JButton(new ImageIcon("./img/fic.png"));
+	private JButton jb_aleatoire = new JButton(new ImageIcon("./img/ale.png"));
+	private JButton centre = new JButton(new ImageIcon("./img/SameGame.png"));
+	
+	/**
+	 * constructeur de la Grille
+	 */
 	public Grille() {
 		super();    	
 		this.addMouseMotionListener(this);
@@ -38,6 +62,9 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 		this.add(centre,BorderLayout.CENTER);
 	}
 
+	/**
+	 * actions réalisés lorsque l'on clique sur l'un des trois boutons du menu
+	 */
 	public void actionPerformed(ActionEvent evenement) {
 
 		if (jb_aleatoire == evenement.getSource()) {
@@ -66,7 +93,7 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 			}
 		}
 
-		else {
+		else if (centre == evenement.getSource()) {
 			JFrame regles = new JFrame();
 			regles.setSize(500, 300);
 			regles.setLayout(new GridLayout(9, 1));
@@ -90,18 +117,13 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 			regles.add(menu8);
 			regles.add(menu9);
 
-
-
-
-
 			regles.setVisible(true);
-			
-
 		}
-
 	}
 
-	//permet de définir le type et les blocs périphériques de chaque bloc aléatoirement
+	/**
+	 * permet de définir le type et les blocs périphériques de chaque bloc aléatoirement
+	 */
 	public void initTableBlocs() {
 		int k=0;
 		Random r = new Random();
@@ -121,7 +143,9 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 		assigneTousBlocsPeripheriques();
 	}
 
-	//permet de définir le type et les blocs périphériques de chaque bloc à l'aide d'un fichier
+	/**
+	 * permet de définir le type et les blocs périphériques de chaque bloc à l'aide d'un fichier
+	 */
 	public void initTableBlocs(String cheminFichier) {
 		int k=0;
 		char cara = ' ';
@@ -158,14 +182,19 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 		assigneTousBlocsPeripheriques();
 	}
 
-	//assigne pour chaque Bloc, ses 4 Blocs périphériques
+	/**
+	 * assigne pour chaque Bloc, ses 4 Blocs périphériques
+	 */
 	public void assigneTousBlocsPeripheriques() {
 		for (int i=0; i<150; i++) {			
 			assigneBlocPeripheriques(tabBlocs[i]);
 		}
 	}
 
-	//assigne au Bloc passé en argument, ses Blocs périphériques
+	/**
+	 * assigne au Bloc passé en argument, ses Blocs périphériques
+	 * @param P_bloc le bloc auquel on veut assigner ses blocs périphériques
+	 */
 	public void assigneBlocPeripheriques(Bloc P_bloc) {
 		if (P_bloc.actif==false) {
 			P_bloc.nord=null;
@@ -183,24 +212,48 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 
 	}
 
-	//retourne le Bloc situé au nord du Bloc passé en argument, retourne un objet null s'il n'existe pas
+	/**
+	 * Renvoie le bloc situé au nord du bloc passé en argument
+	 * @param P_bloc le bloc auquel on souhaite connaître son bloc nord
+	 * @return le bloc situé au nord du bloc passé en argument
+	 */
 	public Bloc getBlocNord(Bloc P_bloc) {
 		return getBloc(P_bloc.posx, P_bloc.posy-1);
 	}
-	//retourne le Bloc situé au sud du Bloc passé en argument, retourne un objet null s'il n'existe pas
+
+	/**
+	 * Renvoie le bloc situé au sud du bloc passé en argument
+	 * @param P_bloc le bloc auquel on souhaite connaître son bloc sud
+	 * @return le bloc situé au sud du bloc passé en argument
+	 */
 	public Bloc getBlocSud(Bloc P_bloc) {
 		return getBloc(P_bloc.posx, P_bloc.posy+1);
 	}
-	//retourne le Bloc situé à l'est du Bloc passé en argument, retourne un objet null s'il n'existe pas
+
+	/**
+	 * Renvoie le bloc situé à l'est du bloc passé en argument
+	 * @param P_bloc le bloc auquel on souhaite connaître son bloc est
+	 * @return le bloc situé à l'est du bloc passé en argument
+	 */
 	public Bloc getBlocEst(Bloc P_bloc) {
 		return getBloc(P_bloc.posx+1, P_bloc.posy);
 	}
-	//retourne le Bloc situé à l'ouest du Bloc passé en argument, retourne un objet null s'il n'existe pas
+
+	/**
+	 * Renvoie le bloc situé à l'ouest du bloc passé en argument
+	 * @param P_bloc le bloc auquel on souhaite connaître son bloc ouest
+	 * @return le bloc situé à l'ouest du bloc passé en argument
+	 */
 	public Bloc getBlocOuest(Bloc P_bloc) {
 		return getBloc(P_bloc.posx-1, P_bloc.posy);
 	}
 
-	//retourne le Bloc se situant au coordonnées x et y, retourne un objet null s'il n'existe pas
+	/**
+	 * Renvoie le bloc situé aux coordonnées x et y
+	 * @param x la coordonnées en x
+	 * @param y le coordonnées en y
+	 * @return le bloc situé aux coordonnées x et y (null si il n'existe pas)
+	 */
 	public Bloc getBloc(int x, int y) {
 		
 		for (int i=0; i<150; i++) {
@@ -211,8 +264,12 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 		return null;
 	}
 
-	//Lorsque la souris est en mouvement, on enlève le focus à tous les Blocs puis on identifie sur quel Bloc
-	//passe la souris. Si la souris est sur un Bloc, on lui met le focus ainsi qu'à ses blocs périphériques
+	/**
+	 * Lorsque la souris est en mouvement :
+	 * on enlève le focus à tous les Blocs 
+	 * on identifie sur quel Bloc passe la souris.
+	 * Si la souris est sur un Bloc, on lui met le focus ainsi qu'à ses blocs périphériques
+	 */
 	public void mouseMoved(MouseEvent evenement) {
 		
 		for (int i=0; i<150; i++) {
@@ -232,7 +289,10 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 	this.repaint();
 	}
 
-	//Prend en argument un Bloc, met le focus sur tous ses Blocs périphériques
+	/**
+	 * Prend en argument un Bloc, met le focus sur tous ses Blocs périphériques
+	 * @param P_bloc le bloc auquel on veut mettre le focus à ses blocs périphériques
+	 */
 	public void focusBlocsPeripheriques(Bloc P_bloc) {
 		int k=0;
 		int save_i=0;
@@ -263,23 +323,24 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 			}
 		}
 
-	  //boucle qui détermine si un seul bloc a le focus
+	  	//boucle qui détermine si un seul bloc a le focus
 		for (int i=0; i<150; i++) {
-	    // si un bloc a le focus 
+	    	// si un bloc a le focus 
 			if (tabBlocs[i].bFocus==true) {
-	      k++; // on ajoute 1 à k
-	      save_i=i; // on sauvegarde l'index du dernier bloc qui a le focus
-	  }
+				k++; // on ajoute 1 à k
+	      		save_i=i; // on sauvegarde l'index du dernier bloc qui a le focus
+	  		}
+		}
+	  	// si il y a qu'un seul bloc qui a le focus, on lui enlève le focus
+		if (k==1)
+			tabBlocs[save_i].bFocus=false;
 	}
-	  // si il y a qu'un seul bloc qui a le focus
-	if (k==1)
-	    tabBlocs[save_i].bFocus=false; // on lui enlève le focus
-
-	}
 
 
 
-	//Lorsque on clique et que des Blocs ont le focus, on les supprime et ils deviennent inactifs
+	/**
+	 * Lorsque on clique et que des Blocs ont le focus, on les supprime et ils deviennent inactifs
+	 */
 	public void mouseClicked(MouseEvent evenement) {
 	
 		boolean testFocus=false;
@@ -306,7 +367,7 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 		do {
 			this.repaint();
 			
-		} while (reorgaColonnes());
+		} while (reorgaVerticale());
 
 		int decalage=0;
 
@@ -315,11 +376,13 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 			decalage++;
 			this.repaint();
 
-		} while (reorgaLignes() && decalage<15);
+		} while (reorgaHorizon() && decalage<15);
 
 	}
 
-	//re-calcul du score
+	/**
+	 * re-calcule du score
+	 */
 	public void actualiseScore() {
 		int n=0;
 	
@@ -337,8 +400,11 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 		addTXT=Integer.toString((int)add);
 	}
 
-
-	public boolean reorgaLignes() {
+	/**
+	 * algorithme permettant le décalage vers la gauche des toutes les colonnes si une colonnes est vide
+	 * @return un booléen si une action a été faite, true si oui, false si non
+	 */
+	public boolean reorgaHorizon() {
 		boolean action=false;
 		for (int i=0; i<15; i++) {
 			if (checkColonneVide(i)) {
@@ -350,7 +416,11 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 		return action;
 	}
 
-	public boolean reorgaColonnes() {	
+	/**
+	 * algorithme permettant de faire tomber un/des bloc(s) si il y a un trou en dessous de lui/eux
+	 * @return un booléen si une action a été faite, true si oui, false si non
+	 */
+	public boolean reorgaVerticale() {	
 		boolean action=false;
 		for (int i=0; i<150; i++) {
 
@@ -397,7 +467,11 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 	}
 
 
-
+	/**
+	 * algorithme permettant de déterminer si la colonne est entièrement vide
+	 * @param numColonne le numéro de la colonne
+	 * @return un booléen, true si c'est vrai, false si c'est faux
+	 */
 	public boolean checkColonneVide(int numColonne) {		
 		for (int j=0; j<10; j++) {
 			Bloc monBloc=getBloc(numColonne,j);
@@ -410,6 +484,10 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 		return true;	
 	}
 
+	/**
+	 * algorithme permettant le décalage vers la gauche la colonne passée en argument
+	 * @param numColonne le numéro de la colonne que l'on souhaite décaler vers la gauche
+	 */
 	public void decalageGauche(int numColonne) {	
 		for (int i=0; i<10; i++) {
 			Bloc monBloc = getBloc(numColonne,i);	
@@ -423,7 +501,10 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 		}
 	}
 
-	//Test la fin de la partie, retourne un booléen, 0 si la parties est en cours, 1 si elle est terminée
+	/**
+	 * renvoie un boolééen qui détermine si la partie est fini 
+	 * @return un booléen, 1 si elle est terminée sinon 0 si elle doit continuer
+	 */
 	public boolean testFin() {
 		boolean fin=true;
 
@@ -460,7 +541,11 @@ public class Grille extends JComponent implements MouseListener, MouseMotionList
 	}
 
 
-
+	/**
+	 * gestion de l'affichage de notre jeu :
+	 * de la grille
+	 * du score
+	 */
 	@Override
 	public void paintComponent(Graphics pinceau) {
 		Graphics secondPinceau = pinceau.create();

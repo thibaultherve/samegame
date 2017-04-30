@@ -3,6 +3,11 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 
+/**
+ * La classe SameGame permet d'afficher la fenêtre de jeu, de paramétrer cette fenêtre
+ * de créer une grille et de la rendre visible
+ * @author Thibault HERVE - Flavien RIZOULIERES
+*/
 public class SameGame {
   public static int LARGEUR_FENETRE = 15*50+300;
   public static int HAUTEUR_FENETRE = 10*57;
